@@ -1,0 +1,103 @@
+-#include<bits/stdc++.h>
+-using namespace std;
+-
+-//250
+-set<int> res;
+-class Cdgame
+-{
+-public:
+-    int rescount(vector <int> a, vector <int> b){
+-        int sum1 = 0, sum2 = 0;
+-        for(auto e: a) sum1 += e;
+-        for(auto e: b) sum2 += e;
+-        for(auto i: a){
+-            for(auto j: b){
+-                res.insert((sum1-i+j)*(sum2-j+i));
+-            }
+-        }
+-        return res.size();
+-    }
+-};
+-
+-//450
+-vector<int> val;
+-int n_cnt[55];
+-int suf_sum[55];
+-class Drbalance
+-{
+-public:
+-    int lesscng(string s, int k){
+-        int n = s.size();
+-        int cur = 0;
+-        for(auto c: s){
+-            cur += c == '+'?1:-1;
+-            val.push_back(cur);
+-        }
+-        for(auto v: val){
+-            if(v<0){
+-                n_cnt[-v]++;
+-            }
+-        }
+-        for(int i = n; i >= 0; i--) suf_sum[i] = suf_sum[i+1] + n_cnt[i];
+-        return (lower_bound(suf_sum+1,suf_sum+n+1,k,greater<int>())-suf_sum)>>1;
+-    }
+-};
+-
+-//1050
+-const int maxn = 51;
+-
+-int hd[maxn],to[maxn<<1],nx[maxn<<1],ec;
+-#define eachEage int i = hd[u]; ~i; i = nx[i]
+-void add(int u,int v)
+-{
+-    nx[ec] = hd[u];
+-    to[ec] = v;
+-    hd[u] = ec++;
+-}
+-
+-int D[maxn];
+-
+-
+-void dfsB(int u,int f = -1)
+-{
+-    for(eachEage){
+-        int v = to[i];
+-        if(v == f) continue;
+-        D[v] = min(D[v],D[u]+1);
+-        dfsB(v,u);
+-    }
+-}
+-
+-int dfsA(int u,int f = -1,int d = 1)
+-{
+-    int re = D[u];
+-    for(eachEage){
+-        int v = to[i];
+-        if(v == f) continue;
+-        if(D[v]>d+1)
+-            re = max(re,dfsA(v,u,d+1));
+-    }
+-    return re;
+-}
+-
+-class Treestrat
+-{
+-public:
+-    int roundcnt(vector <int> tree, vector <int> A, vector <int> B){
+-        memset(D,0x3f,sizeof(D));
+-        memset(hd,0xff,sizeof(hd));
+-        int u = 0;
+-        for(auto fa: tree){
+-            add(fa,++u); add(u,fa);
+-        }
+-        for(auto v: B){
+-            D[v] = 0;
+-            dfsB(v);
+-        }
+-        int ans = 1<<30;
+-        for(auto v: A){
+-            ans = min(dfsA(v),ans);
+-        }
+-        return ans-1;
+-    }
+-};
